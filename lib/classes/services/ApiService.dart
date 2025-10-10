@@ -16,9 +16,10 @@ class ApiService {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(request.toJson()),
       );
-
+      print("response: ${response.statusCode}");
       if (response.statusCode == 200) {
         final jsonBody = jsonDecode(response.body);
+        print(jsonBody);
         return LoginResponse.fromJson(jsonBody);
       } else {
           print("Error: ${response.statusCode}");
