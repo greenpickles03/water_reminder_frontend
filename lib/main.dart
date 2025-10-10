@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:math'; // for color animation math
+import 'package:water_reminder_front_end/classes/dto/LoginRequestDTO.dart';
+import 'dart:math';
+
+import 'package:water_reminder_front_end/classes/services/ApiService.dart'; // for color animation math
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +34,30 @@ class _LoginPageState extends State<LoginPage>
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
+
+  String responseMessage = '';
+  Future<void> _login() async {
+    print("username: " + usernameController.text);
+    print("password: " + passwordController.text);
+    final request = LoginRequest(
+        wUserName: usernameController.text,
+        wPassword: passwordController.text
+    );
+    final response = await apiService.login(request);
+
+    setState(() {
+      if(response != null && response.status == "Success"){
+        responseMessage =
+            "Welcome ${response.userAccount?.wUserName}! Login Successful.";
+      }else{
+        responseMessage = "Login failed Please try again.";
+      }
+    });
+
+  }
+
+
 
   @override
   void initState() {
@@ -110,11 +137,7 @@ class _LoginPageState extends State<LoginPage>
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            final username = usernameController.text;
-                            final password = passwordController.text;
-                            print("Username: $username, Password: $password");
-                          },
+                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blueAccent,
                             padding: const EdgeInsets.symmetric(vertical: 15),
