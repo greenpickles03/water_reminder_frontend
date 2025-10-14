@@ -49,10 +49,19 @@ class _LoginPageState extends State<LoginPage>
 
     setState(() {
       if(response != null && response.status == "Success"){
+       
         responseMessage =
             "Welcome ${response.userAccount?.wUserName}! Login Successful.";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseMessage)),
+        );
+        usernameController.clear();
+        passwordController.clear();
       }else{
         responseMessage = "Login failed Please try again.";
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(responseMessage)),
+        );
       }
     });
 
@@ -185,8 +194,6 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      Text(responseMessage),
                     ],
                   ),
                 ),
