@@ -3,7 +3,7 @@ import 'package:water_reminder_front_end/classes/dto/LoginRequestDTO.dart';
 import 'dart:math';
 
 import 'package:water_reminder_front_end/classes/services/ApiService.dart'; // for color animation math
-import 'package:water_reminder_front_end/pages/SignUpPage.dart'; // Import the SignUpPage class
+import 'package:water_reminder_front_end/pages/SignUp.dart';// Import the SignUpPage class
 
 void main() {
   runApp(const MyApp());
