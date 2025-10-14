@@ -3,6 +3,7 @@ import 'package:water_reminder_front_end/classes/dto/LoginRequestDTO.dart';
 import 'dart:math';
 
 import 'package:water_reminder_front_end/classes/services/ApiService.dart'; // for color animation math
+import 'package:water_reminder_front_end/pages/SignUpPage.dart'; // Import the SignUpPage class
 
 void main() {
   runApp(const MyApp());
@@ -160,7 +161,12 @@ class _LoginPageState extends State<LoginPage>
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            print("click sign up");
+                            // print("click sign up");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const SignUpPage()),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
