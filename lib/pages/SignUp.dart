@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-
 import 'package:water_reminder_front_end/main.dart';
-import 'package:water_reminder_front_end/classes/services/ApiService.dart'; // for color animation math
+import 'package:water_reminder_front_end/classes/services/ApiService.dart';
 import 'package:water_reminder_front_end/classes/dto/AccountRequestDTO.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -38,14 +36,14 @@ class _SignUpPageState extends State<SignUpPage>
   final TextEditingController _passwordController = TextEditingController();
   final ApiService apiService = ApiService();
 
+  bool _obscurePassword = true; // 👁️ show/hide password toggle
+
   @override
   void initState() {
     super.initState();
-
-    // 🎨 Background animation controller
     _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 5))
-          ..repeat(reverse: true);
+    AnimationController(vsync: this, duration: const Duration(seconds: 5))
+      ..repeat(reverse: true);
   }
 
   @override
@@ -56,59 +54,53 @@ class _SignUpPageState extends State<SignUpPage>
     super.dispose();
   }
 
-  void _cancel(){
+  void _cancel() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Cancelling Sign Up...")),
     );
-    Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => const LoginPage(),));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
   }
 
   Future<void> _createAccount() async {
     print("username: " + _usernameController.text);
     print("password: " + _passwordController.text);
+
     final accountRequest = AccountRequest(
-        wUserName: _usernameController.text,
-        wPassword: _passwordController.text
+      wUserName: _usernameController.text,
+      wPassword: _passwordController.text,
     );
     final response = await apiService.createAccount(accountRequest);
 
     setState(() {
-      if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty){
-        if(response != null && response.status == "Success"){
+      if (_usernameController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty) {
+        if (response != null && response.status == "Success") {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Account created for ${response.userAccount?.wUserName}!")),
+            SnackBar(
+              content: Text(
+                "Account created for ${response.userAccount?.wUserName}!",
+              ),
+            ),
           );
           _usernameController.clear();
           _passwordController.clear();
-        }else{
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Account creation failed. ${response?.message}!")),
+            SnackBar(
+              content:
+              Text("Account creation failed. ${response?.message ?? ''}!"),
+            ),
           );
         }
-      }else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Please fill up all the field.")),
+          const SnackBar(content: Text("Please fill up all the fields.")),
         );
       }
-
     });
-  }
-
-  void _onSignUp() {
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (username.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
-      );
-      return;
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Signing up $username...")),
-    );
   }
 
   @override
@@ -116,10 +108,10 @@ class _SignUpPageState extends State<SignUpPage>
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
-        final color1 =
-            Color.lerp(Colors.lightBlueAccent, Colors.blueAccent, _controller.value)!;
-        final color2 =
-            Color.lerp(Colors.cyan, Colors.deepPurpleAccent, 1 - _controller.value)!;
+        final color1 = Color.lerp(
+            Colors.lightBlueAccent, Colors.blueAccent, _controller.value)!;
+        final color2 = Color.lerp(
+            Colors.cyan, Colors.deepPurpleAccent, 1 - _controller.value)!;
 
         return Scaffold(
           body: Container(
@@ -153,7 +145,7 @@ class _SignUpPageState extends State<SignUpPage>
                         ),
                         const SizedBox(height: 24),
 
-                        // Username field
+                        // 🧑 Username Field
                         TextField(
                           controller: _usernameController,
                           decoration: InputDecoration(
@@ -166,29 +158,40 @@ class _SignUpPageState extends State<SignUpPage>
                         ),
                         const SizedBox(height: 20),
 
-                        // Password field
+                        // 🔒 Password Field with Show/Hide toggle
                         TextField(
                           controller: _passwordController,
-                          obscureText: true,
+                          obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             labelText: "Password",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                             prefixIcon: const Icon(Icons.lock),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(height: 30),
 
-                        // Sign Up button
+                        // ✅ Sign Up button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _createAccount,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -205,15 +208,14 @@ class _SignUpPageState extends State<SignUpPage>
                         ),
                         const SizedBox(height: 10),
 
-                        // Cancel button
+                        // ❌ Cancel button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: _cancel,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

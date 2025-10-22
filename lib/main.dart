@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:water_reminder_front_end/classes/dto/LoginRequestDTO.dart';
 import 'dart:math';
-
-import 'package:water_reminder_front_end/classes/services/ApiService.dart'; // for color animation math
-import 'package:water_reminder_front_end/pages/SignUp.dart';// Import the SignUpPage class
+import 'package:water_reminder_front_end/classes/services/ApiService.dart';
+import 'package:water_reminder_front_end/pages/SignUp.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,21 +36,23 @@ class _LoginPageState extends State<LoginPage>
   final TextEditingController passwordController = TextEditingController();
   final ApiService apiService = ApiService();
 
+  bool _obscurePassword = true; // 👁️ For show/hide password
   String responseMessage = '';
+
   Future<void> _login() async {
     print("username: " + usernameController.text);
     print("password: " + passwordController.text);
 
     final request = LoginRequest(
-        wUserName: usernameController.text,
-        wPassword: passwordController.text
+      wUserName: usernameController.text,
+      wPassword: passwordController.text,
     );
     final response = await apiService.login(request);
 
     setState(() {
-      if(usernameController.text.isNotEmpty && passwordController.text.isNotEmpty){
-        if(response != null && response.status == "Success"){
-
+      if (usernameController.text.isNotEmpty &&
+          passwordController.text.isNotEmpty) {
+        if (response != null && response.status == "Success") {
           responseMessage =
           "Welcome ${response.userAccount?.wUserName}! Login Successful.";
           ScaffoldMessenger.of(context).showSnackBar(
@@ -59,23 +60,20 @@ class _LoginPageState extends State<LoginPage>
           );
           usernameController.clear();
           passwordController.clear();
-        }else{
-          responseMessage = "Login failed Please try again.";
+        } else {
+          responseMessage = "Login failed. Please try again.";
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(responseMessage)),
           );
         }
-      }else{
-        responseMessage = "Please fill up all the field.";
+      } else {
+        responseMessage = "Please fill up all the fields.";
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(responseMessage)),
         );
       }
     });
-
   }
-
-
 
   @override
   void initState() {
@@ -97,10 +95,10 @@ class _LoginPageState extends State<LoginPage>
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
-          final color1 =
-          Color.lerp(Colors.lightBlueAccent, Colors.blueAccent, _controller.value)!;
-          final color2 =
-          Color.lerp(Colors.cyan, Colors.deepPurpleAccent, 1 - _controller.value)!;
+          final color1 = Color.lerp(
+              Colors.lightBlueAccent, Colors.blueAccent, _controller.value)!;
+          final color2 = Color.lerp(
+              Colors.cyan, Colors.deepPurpleAccent, 1 - _controller.value)!;
 
           return Container(
             decoration: BoxDecoration(
@@ -142,13 +140,26 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ),
                       const SizedBox(height: 20),
+                      // 👁️ Password field with show/hide toggle
                       TextField(
                         controller: passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
+                        obscureText: _obscurePassword,
+                        decoration: InputDecoration(
                           labelText: "Password",
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.lock),
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                         ),
                       ),
                       const SizedBox(height: 30),
@@ -178,7 +189,6 @@ class _LoginPageState extends State<LoginPage>
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            // print("click sign up");
                             Navigator.push(
                               context,
                               MaterialPageRoute(
