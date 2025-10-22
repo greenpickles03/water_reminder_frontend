@@ -41,6 +41,7 @@ class _LoginPageState extends State<LoginPage>
   Future<void> _login() async {
     print("username: " + usernameController.text);
     print("password: " + passwordController.text);
+
     final request = LoginRequest(
         wUserName: usernameController.text,
         wPassword: passwordController.text
@@ -48,17 +49,24 @@ class _LoginPageState extends State<LoginPage>
     final response = await apiService.login(request);
 
     setState(() {
-      if(response != null && response.status == "Success"){
-       
-        responseMessage =
-            "Welcome ${response.userAccount?.wUserName}! Login Successful.";
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(responseMessage)),
-        );
-        usernameController.clear();
-        passwordController.clear();
+      if(usernameController.text.isNotEmpty && passwordController.text.isNotEmpty){
+        if(response != null && response.status == "Success"){
+
+          responseMessage =
+          "Welcome ${response.userAccount?.wUserName}! Login Successful.";
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseMessage)),
+          );
+          usernameController.clear();
+          passwordController.clear();
+        }else{
+          responseMessage = "Login failed Please try again.";
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseMessage)),
+          );
+        }
       }else{
-        responseMessage = "Login failed Please try again.";
+        responseMessage = "Please fill up all the field.";
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(responseMessage)),
         );

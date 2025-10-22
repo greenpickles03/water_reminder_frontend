@@ -74,17 +74,24 @@ class _SignUpPageState extends State<SignUpPage>
     final response = await apiService.createAccount(accountRequest);
 
     setState(() {
-      if(response != null && response.status == "Success"){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Account created for ${response.userAccount?.wUserName}!")),
-        );
-        _usernameController.clear();
-        _passwordController.clear();
+      if(_usernameController.text.isNotEmpty && _passwordController.text.isNotEmpty){
+        if(response != null && response.status == "Success"){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Account created for ${response.userAccount?.wUserName}!")),
+          );
+          _usernameController.clear();
+          _passwordController.clear();
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Account creation failed. ${response?.message}!")),
+          );
+        }
       }else{
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account creation failed. Please try again.")),
+          SnackBar(content: Text("Please fill up all the field.")),
         );
       }
+
     });
   }
 
